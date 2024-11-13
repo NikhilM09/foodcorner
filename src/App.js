@@ -5,6 +5,8 @@ import Body from './components/Body'
 import Footer from './components/Footer'
 import { Carousel } from 'bootstrap';
 import Restaurantcard from './components/Restaurantcard';
+import { Outlet } from 'react-router-dom';
+
 
 function App() {
   console.log("body component", <Body/>);
@@ -14,7 +16,7 @@ function App() {
     <Header/>
     {/* AAP : Carousel */} 
     {/* both the parties : cardcontainer, restaurantcard, searchbar,filters */}
-    <Body/>
+    <Outlet/>
     {/* AAP */}
     <Footer/>
     {/* <Header></Header> */}

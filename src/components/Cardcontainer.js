@@ -1,10 +1,12 @@
 import Restaurantcard from "./Restaurantcard"
 import {useState, useEffect} from 'react'
+import Shimmer from "./Shimmer"
 
 const Cardcontainer = ({createdBy}) =>{
     const [restaurantCollection, setRestaurantCollection] = useState([])
     const [masterCollection, setMasterCollection] = useState([])
     const [searchText, setSearchText] = useState("")
+    const [error, setError] = useState("");
     // let restaurantCollection = [
     //     {
     //         restaurantName:"Achija Veg Restaurant",
@@ -85,27 +87,39 @@ const Cardcontainer = ({createdBy}) =>{
     }
 
     const getRestaurants = async() =>{
-        const data = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=19.07480&lng=72.88560&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING");
-        const json = await data.json();
+        try{
+        const response = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=19.07480&lng=72.88560&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING");
+        console.log("response", response);
+        if(!response.ok){
+            switch (response.status){
+                case 400 : throw new error("Bad request, kndly check again");
+                case 401 : throw new error("Authentication failed, kindly provide valid credentials");
+                case 403 : throw new error("Forbidden content");
+                case 404 : {
+                    setError("Page not found")
+                    throw new error("Not found");
+                }
+                default : throw new error("something went wrong")
+            }
+        }
+        const json = await response.json();
         console.log("restaurantList", json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
         setRestaurantCollection(json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
         setMasterCollection(json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+        }
+        catch(error){
+            console.log("error found in api", error)
+            // setError(error.message)
+        }
     }
-//case 1 : useEffect will be called only once after initial render
+
     useEffect(()=>{
         getRestaurants()
     },[])
-//case 2 : useEffect will be called  after initial render and everytime restaurantCollection changes
-    // useEffect(()=>{
-    //     console.log("restaurant collection changed")
-    // },[restaurantCollection])
 
-//case 3 : useEffect will be called  after every render
-    // useEffect(()=>{
-
-    // })
-    // getRestaurants();
     console.log("component is rendered")
+    if(error!=="") return <div className="text-red-500 text-4xl font-bold text-center">{error}</div>
+
     return(
         <>
         <div className="flex justify-between">
@@ -117,26 +131,15 @@ const Cardcontainer = ({createdBy}) =>{
         </div>
         {(restaurantCollection.length===0 && masterCollection.length!==0) ? 
             <div className="text-3xl text-center">There are no restaurants match your search</div>
-            : restaurantCollection.length===0 && <div className="text-3xl text-center">Looking for great food near you</div>
+            : restaurantCollection.length===0 && <div className="flex justify-center flex-wrap gap-4">{
+                new Array(20).fill(0).map((card, index) => {return <Shimmer key={index}/>})
+            }</div>
         }
-        <div className='flex gap-4 flex-wrap justify-center'> 
-           {restaurantCollection.map((restaurant)=>{
+        <div className='flex gap-4 flex-wrap justify-center'>
+           {restaurantCollection.map((restaurant, index)=>{
             return (
-                // <Restaurantcard
-                // restaurantName={restaurant?.info?.name}
-                // starRating={restaurant?.info?.avgRating}
-                // deliveryTime={restaurant?.info?.sla?.deliveryTime}
-                // cuisines={restaurant?.info?.cuisines}
-                // location={restaurant?.info?.locality}
-                // imgId={restaurant?.info?.cloudinaryImageId}
-                // />
                 <Restaurantcard
-                // name={restaurant?.info?.name}`
-                // avgRating={restaurant?.info?.avgRating}
-                // deliveryTime={restaurant?.info?.sla?.deliveryTime}
-                // cuisines={restaurant?.info?.cuisines}
-                // locality={restaurant?.info?.locality}
-                // cloudinaryImageId={restaurant?.info?.cloudinaryImageId}
+                key={restaurant?.info?.id}
                 {...restaurant.info}
                 />
             )

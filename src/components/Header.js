@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from 'react-router-dom'
 
 const headingElement = (
   <>
@@ -15,13 +16,12 @@ const Header = () => {
       <div
         className="bg-blue-300 p-3 flex justify-between items-center"
       >
-        <div className='text-3xl md:hidden'>🍔</div>
-        <div className="text-3xl font-semibold">Foodplaza😋</div>
+        <Link to="/" className="text-3xl font-semibold">Foodplaza😋</Link>
         <div className="hidden md:flex gap-3">
-          <div>Home🛖</div>
-          <div>About🌞</div>
-          <div>Contact📞</div>
-          <div>Cart🛒</div>
+          <Link to="/">Home🛖</Link>
+          <Link to="/about">About🌞</Link>
+          <Link to="/contact">Contact📞</Link>
+          <Link to="/cart">Cart🛒</Link>
         </div>
       </div>
       {/* {headingElement}

@@ -1,9 +1,11 @@
-const Restaurantcard = ({counterValue,name, avgRating, sla, cuisines, locality, cloudinaryImageId}) => {
+import { Link } from "react-router-dom"
+
+const Restaurantcard = ({counterValue,name,id, avgRating, sla, cuisines, locality, cloudinaryImageId}) => {
     // console.log("what is props????", props)
     // const {restaurantName, starRating, deliveryTime, cuisines, location} = props
     const IMG_URL = "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/"
     return(
-        <div className='w-[250px]'>
+        <Link to={`/menu/${id}`} className='w-[250px]'>
             {/* <div className='rounded-2xl'>
                 <img className='rounded-2xl' src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/rmlcifdqtpoxdrdvet2s" alt="resImage"/>
             </div> */}
@@ -25,7 +27,7 @@ const Restaurantcard = ({counterValue,name, avgRating, sla, cuisines, locality, 
             {/* <div>Ghatkopar</div> */}
             <div>{locality}</div>
             </div>
-        </div>
+        </Link>
     )
 }
 
