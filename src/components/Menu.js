@@ -1,9 +1,14 @@
 import { useParams } from "react-router-dom"
-import {useEffect} from 'react'
+import {useState, useEffect} from 'react'
+import RestaurantInfo from "./RestaurantInfo";
+import NormalMenu from "./NormalMenu";
 
 const Menu = () =>  {
     const params = useParams();
     console.log("params", params);
+    const [resInfo, setResInfo] = useState([])
+    const [normalMenu, setNormalMenu] = useState([])
+    const [nestedMenu, setNestedMenu] = useState([])
 
     useEffect(()=>{
         getMenu()
@@ -16,10 +21,13 @@ const Menu = () =>  {
             const json = await data.json();
             console.log("menuData",json?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards);
             const menuCollection = json?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards;
+            const restaurantInfo = json?.data?.cards[2]
             const menuList = menuCollection.filter((menuData)=>menuData?.card?.card["@type"]==="type.googleapis.com/swiggy.presentation.food.v2.ItemCategory");
             const nestedMenuList =  menuCollection.filter((menuData)=>menuData?.card?.card["@type"]==="type.googleapis.com/swiggy.presentation.food.v2.NestedItemCategory");
             console.log("menuList", menuList);
             console.log("nestedMenu", nestedMenuList)
+            console.log("restinfo", restaurantInfo)
+            setResInfo(restaurantInfo);
         }
         catch(error){
             console.log("error", error)
@@ -27,7 +35,10 @@ const Menu = () =>  {
     }
 
     return(
-        <h1>This is menu component</h1>
+        <div className="w-8/12 mx-auto">
+        <RestaurantInfo {...resInfo?.card?.card?.info}/>
+        
+        </div>
     )
 }
 
